@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\User;
+
+
 use App\Post;
+
+use DB;
+
+use Excel;
+
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class PostsController extends Controller
+class FileController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,13 +24,42 @@ class PostsController extends Controller
      */
     public function index()
     {
+        $posts = Post::select('id', 'title', 'body', 'user_id', 'created_at')->get();
+        
+        Excel::create('posts', function($excel) use($posts) {
+            $excel->sheet('POSTS', function($sheet) use($posts) {
+                $sheet->fromArray($posts);
+            });
+        })->store('xls', storage_path('/'), true);
 
-        $posts = Post::paginate(10);
-        // $posts = Post::where('user_id', '2')->get()
 
-        // dd($posts);
 
-        return view('posts.index', compact('posts'));
+        return 'all done';
+    }
+
+    /**
+     * Upload files to your app.
+     */
+
+    public function upload()
+    {
+
+        DB::table('posts')->truncate();
+
+        $results = Excel::load('storage/posts.xls', function($reader){
+        })->get();
+        // var_dump($results->toArray());
+        foreach ($results as $row) {
+            Post::create([
+                'id'=>$row->id,
+                'title'=>$row->title,
+                'body'=>$row->body,
+                'user_id'=>$row->user_id,
+                'created_at'=>$row->created_at
+                ]);
+        }
+
+        return view('upload.index');
     }
 
     /**

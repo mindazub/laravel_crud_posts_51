@@ -12,3 +12,5 @@
 */
 
 Route::get('/', 'PostsController@index');
+Route::get('/download', 'FileController@index');
+Route::get('/upload', 'FileController@upload');
