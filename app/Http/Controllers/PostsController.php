@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Validator;
 use App\User;
 use App\Post;
 use App\Http\Requests;
@@ -56,7 +57,8 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -67,7 +69,8 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -79,7 +82,16 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
+        $post = Post::findOrFail($id);
+        $validator = Validator::make($data = $request->all(), Post::$rules);
+        if ($validator->fails())
+        {
+            return Redirect::back()->withErrors($validator)->withInput();
+        }
+        $post->update($data);
+
+        return redirect()->route('posts.index');
     }
 
     /**
@@ -90,6 +102,13 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // dd($id);
+        
+         $post = Post::findOrFail($id)->delete();
+
+        // $term = Term::findOrFail($id)->delete();
+
+         return redirect()->route('posts.index');
+
     }
 }

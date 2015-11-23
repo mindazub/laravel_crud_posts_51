@@ -147,6 +147,7 @@ return [
 
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
+        Illuminate\Html\HtmlServiceProvider::class,
     ],
 
     /*
@@ -197,6 +198,9 @@ return [
         'View'      => Illuminate\Support\Facades\View::class,
 
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+
+        'Form'=> 'Illuminate\Html\FormFacade', 
+        'HTML'=> 'Illuminate\Html\HtmlFacade',
 
     ],
 
