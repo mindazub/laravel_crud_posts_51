@@ -20,7 +20,7 @@ class PostsController extends Controller
     public function index()
     {
 
-        $posts = Post::paginate(10);
+        $posts = Post::orderBy('created_at','desc')->paginate(10);
         // $posts = Post::where('user_id', '2')->get()
 
         // dd($posts);
@@ -35,7 +35,7 @@ class PostsController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -46,7 +46,18 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $validator = Validator::make($data = $request->all(), Post::$rules);
+        if ($validator->fails())
+        {
+            return Redirect::back()->withErrors($validator)->withInput();
+        }
+
+        Post::create($data)->save();
+
+
+
+        return redirect()->route('posts.index');
     }
 
     /**
